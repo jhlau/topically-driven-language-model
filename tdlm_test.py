@@ -215,7 +215,7 @@ if cf.num_tags > 0:
             "please specify tag metadata using --input_tag\n")
         raise SystemExit
 
-    tagxid = cPickle.load(open(os.path.join(cf.output_dir, cf.output_prefix, "tag.pickle")))
+    tagxid = cPickle.load(open(os.path.join(args.model_dir, "tag.pickle")))
     tags = [ [ tagxid[t] for t in line.strip().split("\t") if t in tagxid ] \
         for line in codecs.open(args.input_tag, "r", "utf-8").readlines() ]
 else:
