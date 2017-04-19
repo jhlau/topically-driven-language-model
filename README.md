@@ -68,3 +68,7 @@ optional arguments:
   --gen_sent_on_doc GEN_SENT_ON_DOC
                         generate sentences conditioned on input test documents
 ```
+
+# Publication
+
+Lau, Jey Han, Timothy Baldwin and Trevor Cohn (to appear) Topically Driven Neural Language Model. In Proceedings of the 55th Annual Meeting of the Association for Computational Linguistics (ACL 2017), Vancouver, Canada.
