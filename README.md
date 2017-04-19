@@ -3,7 +3,7 @@
 - gensim: pip install gensim
 - tensorflow 0.8-0.12
 
-# Examples of running the code (example.sh)
+# Running the code (example.sh)
 
 #### Train a word2vec model using gensim. This step is *optional*, you'll only need to do this if you want to initialise tdlm with pre-trained embeddings. word2vec model settings are in the python file (word2vec.py)
 
