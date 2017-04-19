@@ -5,7 +5,7 @@
 
 # Running the code (example.sh)
 
-#### Train a word2vec model using gensim. This step is *optional*, you'll only need to do this if you want to initialise tdlm with pre-trained embeddings. word2vec model settings are in the python file (word2vec.py)
+#### Train a word2vec model using gensim. This step is *optional*, you'll only need to do this if you want to initialise TDLM with pre-trained embeddings. word2vec model settings are in the python file (word2vec.py)
 
 `python word2vec_train.py`
 
