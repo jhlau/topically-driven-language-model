@@ -1,5 +1,5 @@
 # Requirements
-- python2
+- python2.7
 - gensim: pip install gensim
 - tensorflow 0.8-0.12
 
