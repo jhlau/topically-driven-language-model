@@ -10,7 +10,7 @@ if tf.__version__.split(".")[0] == "0":
     else:
         from tensorflow.python.ops.rnn_cell import linear
 else:
-    print "TDLM supports tensorflow 0.8-0.12 only"
+    print("TDLM supports tensorflow 0.8-0.12 only")
     raise SystemExit
 
 #convolutional topic model
@@ -147,7 +147,7 @@ class TopicModel(object):
         topics = []
         entropy = []
         tw_dist = sess.run(tf.nn.softmax(tf.matmul(self.topic_output_embedding, self.tm_softmax_w) + self.tm_softmax_b))
-        for ti in xrange(self.config.topic_number):
+        for ti in range(self.config.topic_number):
             best = matutils.argsort(tw_dist[ti], topn=topn, reverse=True)
             topics.append(best)
             entropy.append(scipy.stats.entropy(tw_dist[ti]))
@@ -265,7 +265,7 @@ class LanguageModel(TopicModel):
         x = [[start_word_id]]
         sent = [start_word_id]
 
-        for _ in xrange(max_length):
+        for _ in range(max_length):
             if type(conv_hidden) is np.ndarray:
             #if conv_hidden != None:
                 probs, state = sess.run([self.probs, self.state], \

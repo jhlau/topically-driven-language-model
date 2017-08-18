@@ -36,7 +36,7 @@ def get_batch(sents, docs, tags, idx, doc_len, sent_len, tag_len, batch_size, pa
         else:
             t.append([])
 
-    for _ in xrange(batch_size - len(d)):
+    for _ in range(batch_size - len(d)):
         d.append([pad_id]*doc_len)
         x.append([pad_id]*sent_len)
         y.append([pad_id]*sent_len)
@@ -149,7 +149,7 @@ def gen_data(vocabxid, dummy_symbols, ignore, corpus, tm_sent_len, lm_sent_len, 
             #chop tm_sents into sequences of length tm_sent_len
             seq_id = 0
             doc_seqs = []
-            for si in xrange(int(math.ceil(len(tm_sents) * 1.0 / tm_sent_len))):
+            for si in range(int(math.ceil(len(tm_sents) * 1.0 / tm_sent_len))):
                 seq = tm_sents[si*tm_sent_len:((si+1)*tm_sent_len+1)]
                 if len(seq) > 1:
                     sents[0].append((len(docs[0]), seq_id, seq))
@@ -161,7 +161,7 @@ def gen_data(vocabxid, dummy_symbols, ignore, corpus, tm_sent_len, lm_sent_len, 
             seq_id = 0
             doc_seqs = []
             for s in lm_sents:
-                for si in xrange(int(math.ceil(len(s) * 1.0 / lm_sent_len))):
+                for si in range(int(math.ceil(len(s) * 1.0 / lm_sent_len))):
                     seq = s[si*lm_sent_len:((si+1)*lm_sent_len+1)]
                     if len(seq) > 1:
                         sents[1].append((len(docs[1]), seq_id, seq))
@@ -185,20 +185,20 @@ def gen_tag(corpus, pad_symbol):
     return tagxid
 
 def print_corpus_stats(name, sents, docs, stats):
-    print name + ":"
-    print "\tno. of docs =", len(docs[0])
+    print(name + ":")
+    print("\tno. of docs =", len(docs[0]))
     if len(sents[0]) > 0:
-        print "\ttopic model no. of sequences =", len(sents[0])
-        print "\ttopic model no. of tokens =", sum([ len(item[2])-1 for item in sents[0] ])
-        print "\toriginal doc mean len =", stats[3]
-        print "\toriginal doc max len =", stats[4]
-        print "\toriginal doc min len =", stats[5]
+        print("\ttopic model no. of sequences =", len(sents[0]))
+        print("\ttopic model no. of tokens =", sum([ len(item[2])-1 for item in sents[0] ]))
+        print("\toriginal doc mean len =", stats[3])
+        print("\toriginal doc max len =", stats[4])
+        print("\toriginal doc min len =", stats[5])
     if len(sents[1]) > 0:
-        print "\tlanguage model no. of sequences =", len(sents[1])
-        print "\tlanguage model no. of tokens =", sum([ len(item[2])-1 for item in sents[1] ])
-        print "\toriginal sent mean len =", stats[0]
-        print "\toriginal sent max len =", stats[1]
-        print "\toriginal sent min len =", stats[2]
+        print("\tlanguage model no. of sequences =", len(sents[1]))
+        print("\tlanguage model no. of tokens =", sum([ len(item[2])-1 for item in sents[1] ]))
+        print("\toriginal sent mean len =", stats[0])
+        print("\toriginal sent max len =", stats[1])
+        print("\toriginal sent min len =", stats[2])
 
 def compute_tp_fp(x, y):
     n = max( [max(x), max(y)] ) + 1
