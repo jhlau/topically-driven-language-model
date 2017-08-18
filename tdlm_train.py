@@ -110,7 +110,7 @@ def run_epoch(sents, docs, labels, tags, models, is_training):
 
     if labels != None:
         #randomise the batches
-        batch_ids = range(int(math.ceil(float(len(docs[0]))/cf.batch_size)))
+        batch_ids = list(range(int(math.ceil(float(len(docs[0]))/cf.batch_size))))
         random.shuffle(batch_ids)
 
         start_time = time.time()
