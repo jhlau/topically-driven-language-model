@@ -296,15 +296,15 @@ with tf.Graph().as_default(), tf.Session() as sess:
     if cf.save_model:
         #vocabulary information
         pickle.dump((idxvocab, tm_ignore, dummy_symbols), \
-            open(os.path.join(cf.output_dir, cf.output_prefix, "vocab.pickle"), "w"))
+            open(os.path.join(cf.output_dir, cf.output_prefix, "vocab.pickle"), "wb"))
 
         #tag information
         if len(tagxid) > 0:
-            pickle.dump(tagxid, open(os.path.join(cf.output_dir, cf.output_prefix, "tag.pickle"), "w"))
+            pickle.dump(tagxid, open(os.path.join(cf.output_dir, cf.output_prefix, "tag.pickle"), "wb"))
 
         #create a dictionary object for config
         cf_dict = {}
         for k,v in vars(cf).items():
             if not k.startswith("__"):
                 cf_dict[k] = v
-        pickle.dump(cf_dict, open(os.path.join(cf.output_dir, cf.output_prefix, "config.pickle"), "w"))
+        pickle.dump(cf_dict, open(os.path.join(cf.output_dir, cf.output_prefix, "config.pickle"), "wb"))
