@@ -74,7 +74,7 @@ def compute_dt_dist(docs, labels, tags, model, max_len, batch_size, pad_id, idxv
                     print("Topic", ti, "=", attention[si][ti])
                 docid += 1
 
-    np.save(open(output_file, "w"), dt_dist)
+    np.save(open(output_file, "wb"), dt_dist)
 
 def run_epoch(sents, docs, tags, p1, pad_id, cf, idxvocab):
     (tm, lm) = p1
@@ -116,7 +116,7 @@ def run_epoch_doc(docs, labels, tags, tm, pad_id, cf):
     print("\ntest classification accuracy = %.3f" % np.mean(accs))
 
 def gen_sent_on_topic(idxvocab, vocabxid, start_symbol, end_symbol, cf):
-    output = codecs.open(args.gen_sent_on_topic, "w", "utf-8")
+    output = codecs.open(args.gen_sent_on_topic, "wb", "utf-8")
     topics, entropy = tm.get_topics(sess, topn=topn)
     with tf.variable_scope("model", reuse=True, initializer=initializer):
         mgen = LM(is_training=False, vocab_size=len(idxvocab), batch_size=1, num_steps=1, config=cf, \
@@ -141,8 +141,8 @@ def gen_sent_on_topic(idxvocab, vocabxid, start_symbol, end_symbol, cf):
 def gen_sent_on_doc(docs, tags, idxvocab, vocabxid, start_symbol, end_symbol, cf):
     topics, _ = tm.get_topics(sess, topn=topn)
     topics = [ " ".join([idxvocab[w] for w in t]) for t in topics ]
-    doc_text = [ item.replace("\t", "\n") for item in codecs.open(args.input_doc, "r", "utf-8").readlines() ]
-    output = codecs.open(args.gen_sent_on_doc, "w", "utf-8")
+    doc_text = [ item.replace("\t", "\n") for item in codecs.open(args.input_doc, "rb", "utf-8").readlines() ]
+    output = codecs.open(args.gen_sent_on_doc, "wb", "utf-8")
     with tf.variable_scope("model", reuse=True, initializer=initializer):
         mgen = LM(is_training=False, vocab_size=len(idxvocab), batch_size=1, num_steps=1, config=cf, \
             reuse_conv_variables=True)
@@ -178,13 +178,13 @@ def gen_sent_on_doc(docs, tags, idxvocab, vocabxid, start_symbol, end_symbol, cf
 ######
 
 #load the vocabulary
-vocab = pickle.load(open(os.path.join(args.model_dir, "vocab.pickle")))
+vocab = pickle.load(open(os.path.join(args.model_dir, "vocab.pickle"), 'rb'))
 idxvocab, tm_ignore, dummy_symbols = vocab[0], vocab[1], vocab[2]
 pad_symbol, start_symbol, end_symbol = dummy_symbols[0], dummy_symbols[1], dummy_symbols[2]
 vocabxid = dict([(y,x) for x,y in enumerate(idxvocab)])
 
 #load config
-cf_dict = pickle.load(open(os.path.join(args.model_dir, "config.pickle")))
+cf_dict = pickle.load(open(os.path.join(args.model_dir, "config.pickle"), 'rb'))
 if "num_classes" not in cf_dict:
     cf_dict["num_classes"] = 0
 if "num_tags" not in cf_dict:
@@ -216,9 +216,9 @@ if cf.num_tags > 0:
             "please specify tag metadata using --input_tag\n")
         raise SystemExit
 
-    tagxid = pickle.load(open(os.path.join(args.model_dir, "tag.pickle")))
+    tagxid = pickle.load(open(os.path.join(args.model_dir, "tag.pickle"), 'rb'))
     tags = [ [ tagxid[t] for t in line.strip().split("\t") if t in tagxid ] \
-        for line in codecs.open(args.input_tag, "r", "utf-8").readlines() ]
+        for line in codecs.open(args.input_tag, "rb", "utf-8").readlines() ]
 else:
     tags = None
 
@@ -245,13 +245,13 @@ with tf.Graph().as_default(), tf.Session() as sess:
     #print(topics
     if args.output_topic:
         topics, entropy = tm.get_topics(sess, topn=topn)
-        output = codecs.open(args.output_topic, "w", "utf-8")
+        output = codecs.open(args.output_topic, "wb", "utf-8")
         for ti, t in enumerate(topics):
             output.write(" ".join([ idxvocab[item] for item in t ]) + "\n")
 
     #output tag embeddings
     if args.output_tag_embedding and cf.num_tags > 0:
-        np.save(open(args.output_tag_embedding, "w"), sess.run(tm.tag_embedding))
+        np.save(open(args.output_tag_embedding, "wb"), sess.run(tm.tag_embedding))
 
     #compute test perplexities
     if args.print_perplexity:

@@ -1,7 +1,7 @@
 # Requirements
-- python2.7
+- python3.5
 - gensim: pip install gensim
-- tensorflow 0.8-0.12
+- tensorflow 0.12
 
 # Data format
 - One line per document
