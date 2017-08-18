@@ -78,7 +78,7 @@ def run_epoch(sents, docs, labels, tags, models, is_training):
     #generate the batches
     tm_num_batches, lm_num_batches = int(math.ceil(float(len(sents[0]))/cf.batch_size)), \
         int(math.ceil(float(len(sents[1]))/cf.batch_size))
-    batch_ids = [ (item, 0) for item in range(tm_num_batches) ] + [ (item, 1) for item in range(lm_num_batches) ]
+    batch_ids = list([ (item, 0) for item in range(tm_num_batches) ] + [ (item, 1) for item in range(lm_num_batches) ])
     seq_lens = (cf.tm_sent_len, cf.lm_sent_len)
     #shuffle batches and sentences
     random.shuffle(batch_ids)
@@ -146,6 +146,8 @@ def print_progress(bi, batch_total, is_training, output_string):
         else:
             sys.stdout.write("\r")
         sys.stdout.flush()
+
+
 ######
 #main#
 ######
