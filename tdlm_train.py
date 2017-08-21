@@ -12,7 +12,7 @@ import random
 import time
 import os
 import math
-import cPickle
+import pickle
 import operator
 import tensorflow as tf
 import numpy as np
@@ -44,8 +44,9 @@ dummy_symbols = [pad_symbol, start_symbol, end_symbol, unk_symbol]
 #functions#
 ###########
 
-def fetch_batch_and_train(sents, docs, tags, model, seq_len, i, (tm_costs, tm_words, lm_costs, lm_words), \
-    (m_tm_cost, m_tm_train, m_lm_cost, m_lm_train)):
+def fetch_batch_and_train(sents, docs, tags, model, seq_len, i, p1, p2):
+    (tm_costs, tm_words, lm_costs, lm_words) = p1
+    (m_tm_cost, m_tm_train, m_lm_cost, m_lm_train) = p2
     x, y, m, d, t = get_batch(sents, docs, tags, i, cf.doc_len, seq_len, cf.tag_len, cf.batch_size, 0, \
         (True if isinstance(model, LM) else False))
 
@@ -77,7 +78,7 @@ def run_epoch(sents, docs, labels, tags, models, is_training):
     #generate the batches
     tm_num_batches, lm_num_batches = int(math.ceil(float(len(sents[0]))/cf.batch_size)), \
         int(math.ceil(float(len(sents[1]))/cf.batch_size))
-    batch_ids = [ (item, 0) for item in range(tm_num_batches) ] + [ (item, 1) for item in range(lm_num_batches) ]
+    batch_ids = list([ (item, 0) for item in range(tm_num_batches) ] + [ (item, 1) for item in range(lm_num_batches) ])
     seq_lens = (cf.tm_sent_len, cf.lm_sent_len)
     #shuffle batches and sentences
     random.shuffle(batch_ids)
@@ -109,7 +110,7 @@ def run_epoch(sents, docs, labels, tags, models, is_training):
 
     if labels != None:
         #randomise the batches
-        batch_ids = range(int(math.ceil(float(len(docs[0]))/cf.batch_size)))
+        batch_ids = list(range(int(math.ceil(float(len(docs[0]))/cf.batch_size))))
         random.shuffle(batch_ids)
 
         start_time = time.time()
@@ -145,31 +146,31 @@ def print_progress(bi, batch_total, is_training, output_string):
         else:
             sys.stdout.write("\r")
         sys.stdout.flush()
+
+
 ######
 #main#
 ######
 #set the seeds
 random.seed(cf.seed)
 np.random.seed(cf.seed)
-#utf-8 output
-sys.stdout = codecs.getwriter('utf-8')(sys.stdout)
 
 #set topic vector size and load word embedding model if given
 if cf.word_embedding_model:
-    print "Loading word embedding model..."
+    print("Loading word embedding model...")
     mword = g.Word2Vec.load(cf.word_embedding_model)
     cf.word_embedding_size = mword.vector_size
 
 #first pass to collect vocabulary information
-print "First pass on train corpus to collect vocabulary stats..."
+print("First pass on train corpus to collect vocabulary stats...")
 idxvocab, vocabxid, tm_ignore = gen_vocab(dummy_symbols, cf.train_corpus, cf.stopwords, cf.vocab_minfreq, \
     cf.vocab_maxfreq, cf.verbose)
 
 #second pass to collect train/valid data for topic and language model
-print "Processing train corpus to collect sentence and document data..."
+print("Processing train corpus to collect sentence and document data...")
 train_sents, train_docs, train_docids, train_stats = gen_data(vocabxid, dummy_symbols, tm_ignore, cf.train_corpus, \
     cf.tm_sent_len, cf.lm_sent_len, cf.verbose, False)
-print "Processing valid corpus to collect sentence and document data..."
+print("Processing valid corpus to collect sentence and document data...")
 valid_sents, valid_docs, valid_docids, valid_stats = gen_data(vocabxid, dummy_symbols, tm_ignore, cf.valid_corpus, \
     cf.tm_sent_len, cf.lm_sent_len, cf.verbose, False)
 
@@ -206,11 +207,11 @@ if cf.topic_number == 0:
     valid_sents = ([], valid_sents[1])
 
 #print some statistics of the data
-print "Vocab size =", len(idxvocab)
+print("Vocab size =", len(idxvocab))
 if cf.num_classes > 0:
-    print "Class size (supervised) =", cf.num_classes
+    print("Class size (supervised) =", cf.num_classes)
 if cf.num_tags > 0:
-    print "Tag size =", cf.num_tags - 1
+    print("Tag size =", cf.num_tags - 1)
 print_corpus_stats("Train corpus", train_sents, train_docs, train_stats)
 print_corpus_stats("Valid corpus", valid_sents, valid_docs, valid_stats)
 
@@ -249,8 +250,8 @@ with tf.Graph().as_default(), tf.Session() as sess:
 
     #train model
     prev_ppl = None
-    for i in xrange(cf.epoch_size):
-        print "\nEpoch =", i
+    for i in range(cf.epoch_size):
+        print("\nEpoch =", i)
         #run a train epoch
         run_epoch(train_sents, train_docs, train_labels, train_tags, (tm_train, lm_train), True)
         #run a valid epoch
@@ -262,50 +263,50 @@ with tf.Graph().as_default(), tf.Session() as sess:
                 prev_ppl = curr_ppl
             else:
                 saver.restore(sess, os.path.join(cf.output_dir, cf.output_prefix, "model.ckpt"))
-                print "\tNew valid performance > prev valid performance: restoring previous parameters..."
+                print("\tNew valid performance > prev valid performance: restoring previous parameters...")
 
     #print top-N words from topics
     if cf.topic_number > 0:
-        print "\nTopics\n======"
+        print("\nTopics\n======")
         topics, entropy = tm_train.get_topics(sess, topn=20)
         for ti, t in enumerate(topics):
-            print "Topic", ti, "[", ("%.2f" % entropy[ti]), "] :", " ".join([ idxvocab[item] for item in t ])
+            print("Topic", ti, "[", ("%.2f" % entropy[ti]), "] :", " ".join([ idxvocab[item] for item in t ]))
 
     #generate some random sentences
     if cf.rnn_hidden_size > 0:
-        print "\nRandom Generated Sentences\n=========================="
+        print("\nRandom Generated Sentences\n==========================")
         with tf.variable_scope("model", reuse=True, initializer=initializer):
             mgen = LM(is_training=False, vocab_size=len(idxvocab), batch_size=1, num_steps=1, config=cf, \
                 reuse_conv_variables=True)
         for temp in [1.0, 0.75, 0.5]:
-            print "\nTemperature =", temp
-            for _ in xrange(10):
+            print("\nTemperature =", temp)
+            for _ in range(10):
                 #select a random topic
                 if cf.topic_number > 0:
                     topic = random.randint(0, cf.topic_number-1)
-                    print "\tTopic", topic, ":",
+                    print("\tTopic", topic, ":",)
                 else:
                     topic = -1
-                    print "\t",
+                    print("\t",)
 
                 s = mgen.generate_on_topic(sess, topic, vocabxid[start_symbol], temp, cf.lm_sent_len+10, \
                     vocabxid[end_symbol])
                 s = [ idxvocab[item] for item in s ]
-                print " ".join(s)
+                print(" ".join(s))
 
     #save model vocab and configurations
     if cf.save_model:
         #vocabulary information
-        cPickle.dump((idxvocab, tm_ignore, dummy_symbols), \
-            open(os.path.join(cf.output_dir, cf.output_prefix, "vocab.pickle"), "w"))
+        pickle.dump((idxvocab, tm_ignore, dummy_symbols), \
+            open(os.path.join(cf.output_dir, cf.output_prefix, "vocab.pickle"), "wb"))
 
         #tag information
         if len(tagxid) > 0:
-            cPickle.dump(tagxid, open(os.path.join(cf.output_dir, cf.output_prefix, "tag.pickle"), "w"))
+            pickle.dump(tagxid, open(os.path.join(cf.output_dir, cf.output_prefix, "tag.pickle"), "wb"))
 
         #create a dictionary object for config
         cf_dict = {}
         for k,v in vars(cf).items():
             if not k.startswith("__"):
                 cf_dict[k] = v
-        cPickle.dump(cf_dict, open(os.path.join(cf.output_dir, cf.output_prefix, "config.pickle"), "w"))
+        pickle.dump(cf_dict, open(os.path.join(cf.output_dir, cf.output_prefix, "config.pickle"), "wb"))
