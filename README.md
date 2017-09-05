@@ -3,10 +3,11 @@
 - gensim: pip install gensim
 - tensorflow 0.8-0.12
 
-# Data format
+# Data Format
 - One line per document
 - Sentences are delimited by tabs in each document
 - See examples in data/
+- [ACL2017 Paper dataset (AP News, BNC and IMDB)](https://ibm.box.com/s/ls61p8ovc1y87w45oa02zink2zl7l6z4)
 
 # Running the code (example.sh)
 
