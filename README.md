@@ -77,4 +77,4 @@ optional arguments:
 
 # Publication
 
-Lau, Jey Han, Timothy Baldwin and Trevor Cohn (2017) [Topically Driven Neural Language Model](http://aclweb.org/anthology/P/P17/P17-1033.pdf). In Proceedings of the 55th Annual Meeting of the Association for Computational Linguistics (ACL 2017), Vancouver, Canada, pp. 355--365.
+Lau, Jey Han, Timothy Baldwin and Trevor Cohn (2017). [Topically Driven Neural Language Model](http://aclweb.org/anthology/P/P17/P17-1033.pdf). In Proceedings of the 55th Annual Meeting of the Association for Computational Linguistics (ACL 2017), Vancouver, Canada, pp. 355--365.
