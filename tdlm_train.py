@@ -217,7 +217,7 @@ print_corpus_stats("Valid corpus", valid_sents, valid_docs, valid_stats)
 #train model
 with tf.Graph().as_default(), tf.Session() as sess:
     tf.set_random_seed(cf.seed)
-    initializer = tf.contrib.layers.xavier_initializer(seed=cf.seed)
+    initializer = tf.contrib.layers.xavier_initializer()
     with tf.variable_scope("model", reuse=None, initializer=initializer):
         tm_train = TM(is_training=True, vocab_size=len(idxvocab), batch_size=cf.batch_size, \
             num_steps=cf.tm_sent_len, num_classes=num_classes, config=cf) if cf.topic_number > 0 else None
