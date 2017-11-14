@@ -1,5 +1,5 @@
 # Requirements
-- python2.7 (python3 code available in python3 branch)
+- python2.7 (development python3 code available in python3 branch; code still requires testing)
 - gensim: pip install gensim
 - tensorflow 0.8-0.12
 
